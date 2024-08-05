@@ -1,3 +1,7 @@
 spring:
   application:
     name: weather-tracking-api
+
+management:
+  endpoints:
+    web.exposure.include: health
