@@ -1,4 +1,4 @@
-package kae.wasun.weather.api.dto;
+package kae.wasun.weather.api.model.dto;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package kae.wasun.weather.api.controller;
 
-import kae.wasun.weather.api.dto.DeviceDto;
+import kae.wasun.weather.api.model.dto.DeviceDto;
 import kae.wasun.weather.api.service.DeviceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

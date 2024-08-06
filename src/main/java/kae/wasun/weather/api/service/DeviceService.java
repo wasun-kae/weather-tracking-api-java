@@ -1,6 +1,6 @@
 package kae.wasun.weather.api.service;
 
-import kae.wasun.weather.api.dto.DeviceDto;
+import kae.wasun.weather.api.model.dto.DeviceDto;
 import org.springframework.stereotype.Service;
 
 @Service
