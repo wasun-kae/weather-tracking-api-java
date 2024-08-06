@@ -40,7 +40,7 @@ public class DeviceControllerIT {
     class findById {
 
         @Test
-        void should_return_status_ok_with_device_data_if_exists() throws Exception {
+        void should_return_status_ok_with_data_if_device_exists() throws Exception {
             var deviceId = "mock-device-id";
             var deviceKey = MessageFormat.format("device#{0}", deviceId);
             var document = WeatherTrackingDocument.builder()
@@ -57,6 +57,22 @@ public class DeviceControllerIT {
                     .andExpect(content().json("""
                                     {
                                         "id": "mock-device-id"
+                                    }
+                                    """
+                            )
+                    );
+        }
+
+        @Test
+        void should_return_status_not_found_with_error_message_if_not_exist() throws Exception {
+            var deviceId = "mock-device-id";
+            var path = MessageFormat.format("/devices/{0}", deviceId);
+
+            mockMvc.perform(get(path))
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().json("""
+                                    {
+                                        "message": "Item Not Found"
                                     }
                                     """
                             )
