@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class ActuatorEndpointIT {
+public class ManagementEndpointIT {
 
     @Autowired
     private MockMvc mockMvc;

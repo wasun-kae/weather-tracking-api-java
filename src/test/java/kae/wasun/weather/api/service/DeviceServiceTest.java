@@ -22,7 +22,7 @@ public class DeviceServiceTest {
             var deviceId = "mock-device-id";
             var actual = deviceService.findById(deviceId);
 
-            assertThat(actual.getId()).isEqualTo("mock-device-id");
+            assertThat(actual.getId()).isEqualTo(deviceId);
         }
     }
 }
