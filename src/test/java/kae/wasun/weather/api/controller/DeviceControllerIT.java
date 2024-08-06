@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@Import({AwsConfig.class, TestContainersConfig.class, DynamoDBConfig.class})
+@Import({AwsConfig.class, DynamoDBConfig.class, TestContainersConfig.class})
 public class DeviceControllerIT {
 
     @Autowired
