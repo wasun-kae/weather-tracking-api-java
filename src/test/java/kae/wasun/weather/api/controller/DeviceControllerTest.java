@@ -1,6 +1,7 @@
 package kae.wasun.weather.api.controller;
 
 import kae.wasun.weather.api.model.dto.DeviceDto;
+import kae.wasun.weather.api.model.exception.ItemNotFoundException;
 import kae.wasun.weather.api.service.DeviceService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +30,7 @@ class DeviceControllerTest {
     class findById {
 
         @BeforeEach
-        void setUp() {
+        void setUp() throws ItemNotFoundException {
             var deviceDto = DeviceDto.builder()
                     .id(deviceId)
                     .build();
@@ -38,14 +39,14 @@ class DeviceControllerTest {
         }
 
         @Test
-        void should_return_status_200_when_device_exists() {
+        void should_return_status_200_when_device_exists() throws ItemNotFoundException {
             var actual = deviceController.findById(deviceId);
 
             assertThat(actual.getStatusCode().value()).isEqualTo(200);
         }
 
         @Test
-        void should_return_existing_device_data() {
+        void should_return_existing_device_data() throws ItemNotFoundException {
             var actual = deviceController.findById(deviceId);
 
             assertThat(actual.getBody()).isNotNull();
@@ -53,7 +54,7 @@ class DeviceControllerTest {
         }
 
         @Test
-        void should_find_existing_device_by_given_id() {
+        void should_find_existing_device_by_given_id() throws ItemNotFoundException {
             deviceController.findById(deviceId);
 
             verify(deviceService, times(1)).findById(deviceId);
