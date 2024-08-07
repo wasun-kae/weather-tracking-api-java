@@ -73,7 +73,7 @@ public class DeviceRepositoryIT {
                     .id(deviceId)
                     .build();
 
-            var actual = deviceRepository.save(deviceToSave);
+            var actual = deviceRepository.create(deviceToSave);
 
             assertThat(actual.getId()).isEqualTo(deviceId);
         }
@@ -95,7 +95,7 @@ public class DeviceRepositoryIT {
             DynamoDBTestHelper.putItem(enhancedClient, existingDocument);
 
             assertThatThrownBy(() ->
-                    deviceRepository.save(device)
+                    deviceRepository.create(device)
             ).isInstanceOf(ConditionalCheckFailedException.class);
         }
     }

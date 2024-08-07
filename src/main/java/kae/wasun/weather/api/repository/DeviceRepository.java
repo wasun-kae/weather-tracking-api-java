@@ -42,10 +42,10 @@ public class DeviceRepository {
         );
     }
 
-    public Device save(Device device) {
+    public Device create(Device device) {
         var partitionKey = MessageFormat.format("device#{0}", device.getId());
         var sortKey = MessageFormat.format("device#{0}", device.getId());
-        var documentToSaved = WeatherTrackingDocument.builder()
+        var documentToCreate = WeatherTrackingDocument.builder()
                 .PK(partitionKey)
                 .SK(sortKey)
                 .id(device.getId())
@@ -56,7 +56,7 @@ public class DeviceRepository {
                 .build();
 
         var putItemRequest = PutItemEnhancedRequest.builder(WeatherTrackingDocument.class)
-                .item(documentToSaved)
+                .item(documentToCreate)
                 .conditionExpression(expression)
                 .build();
 
