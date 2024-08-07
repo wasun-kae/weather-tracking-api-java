@@ -70,11 +70,11 @@ public class DeviceControllerIT {
             mockMvc.perform(get(path))
                     .andExpect(status().isOk())
                     .andExpect(content().json("""
-                                    {
-                                        "id": "mock-device-id"
-                                    }
-                                    """
-                            )
+                            {
+                                "id": "mock-device-id",
+                                "createdAt": "2024-08-07T12:34:56.789Z"
+                            }
+                            """, true)
                     );
         }
 
@@ -86,11 +86,10 @@ public class DeviceControllerIT {
             mockMvc.perform(get(path))
                     .andExpect(status().isNotFound())
                     .andExpect(content().json("""
-                                    {
-                                        "message": "Item Not Found"
-                                    }
-                                    """
-                            )
+                            {
+                                "message": "Item Not Found"
+                            }
+                            """, true)
                     );
         }
     }
@@ -111,11 +110,11 @@ public class DeviceControllerIT {
                     )
                     .andExpect(status().isCreated())
                     .andExpect(content().json("""
-                                    {
-                                        "id": "mock-device-id"
-                                    }
-                                    """
-                            )
+                            {
+                                "id": "mock-device-id",
+                                "createdAt": "2024-08-07T12:34:56.789Z"
+                            }
+                            """, true)
                     );
         }
 
@@ -143,11 +142,10 @@ public class DeviceControllerIT {
                     )
                     .andExpect(status().isConflict())
                     .andExpect(content().json("""
-                                    {
-                                        "message": "Item Already Exists"
-                                    }
-                                    """
-                            )
+                            {
+                                "message": "Item Already Exists"
+                            }
+                            """, true)
                     );
         }
 
@@ -178,11 +176,10 @@ public class DeviceControllerIT {
                     )
                     .andExpect(status().isBadRequest())
                     .andExpect(content().json("""
-                                    {
-                                        "message": "Invalid Format"
-                                    }
-                                    """
-                            )
+                            {
+                                "message": "Invalid Format"
+                            }
+                            """, true)
                     );
         }
     }

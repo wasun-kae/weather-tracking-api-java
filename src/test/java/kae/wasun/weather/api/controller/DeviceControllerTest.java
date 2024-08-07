@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -32,8 +34,10 @@ class DeviceControllerTest {
         @BeforeEach
         void setUp() throws ItemNotFoundException {
             var deviceId = "mock-device-id";
+            var createdAt = Instant.parse("2024-08-07T12:34:56.789000Z");
             var deviceDto = DeviceDto.builder()
                     .id(deviceId)
+                    .createdAt(createdAt)
                     .build();
 
             when(deviceService.findById(deviceId)).thenReturn(deviceDto);
@@ -54,6 +58,7 @@ class DeviceControllerTest {
 
             assertThat(actual.getBody()).isNotNull();
             assertThat(actual.getBody().getId()).isEqualTo("mock-device-id");
+            assertThat(actual.getBody().getCreatedAt()).isEqualTo(Instant.parse("2024-08-07T12:34:56.789000Z"));
         }
 
         @Test
@@ -71,9 +76,15 @@ class DeviceControllerTest {
         @BeforeEach
         void setUp() throws ItemAlreadyExists {
             var deviceId = "mock-device-id";
-            var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
+            var createdAt = Instant.parse("2024-08-07T12:34:56.789000Z");
+            var createDeviceDto = CreateDeviceDto
+                    .builder()
+                    .id(deviceId)
+                    .build();
+
             var deviceDto = DeviceDto.builder()
                     .id(deviceId)
+                    .createdAt(createdAt)
                     .build();
 
             when(deviceService.create(createDeviceDto)).thenReturn(deviceDto);
@@ -98,6 +109,7 @@ class DeviceControllerTest {
 
             assertThat(actual.getBody()).isNotNull();
             assertThat(actual.getBody().getId()).isEqualTo("mock-device-id");
+            assertThat(actual.getBody().getCreatedAt()).isEqualTo(Instant.parse("2024-08-07T12:34:56.789000Z"));
         }
 
         @Test

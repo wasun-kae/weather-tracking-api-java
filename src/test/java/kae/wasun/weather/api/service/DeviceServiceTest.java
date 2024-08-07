@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +36,12 @@ public class DeviceServiceTest {
         @BeforeEach
         void setUp() {
             var deviceId = "mock-device-id";
-            var device = Device.builder().id(deviceId).build();
+            var createdAt = Instant.parse("2024-08-07T12:34:56.789Z");
+            var device = Device.builder()
+                    .id(deviceId)
+                    .createdAt(createdAt)
+                    .build();
+
             when(deviceRepository.findById(deviceId)).thenReturn(Optional.of(device));
         }
 
@@ -45,6 +51,7 @@ public class DeviceServiceTest {
             var actual = deviceService.findById(deviceId);
 
             assertThat(actual.getId()).isEqualTo("mock-device-id");
+            assertThat(actual.getCreatedAt()).isEqualTo(Instant.parse("2024-08-07T12:34:56.789Z"));
         }
 
         @Test
@@ -124,19 +131,28 @@ public class DeviceServiceTest {
             @BeforeEach
             void setUp() throws ItemAlreadyExists {
                 var deviceId = "mock-device-id";
-                var createdDevice = Device.builder().id(deviceId).build();
+                var createdAt = Instant.parse("2024-08-07T12:34:56.789Z");
+                var deviceToCreate = Device.builder()
+                        .id(deviceId)
+                        .build();
+
+                var createdDevice = Device.builder()
+                        .id(deviceId)
+                        .createdAt(createdAt)
+                        .build();
 
                 when(deviceRepository.findById(deviceId)).thenReturn(Optional.empty());
-                when(deviceRepository.create(createdDevice)).thenReturn(createdDevice);
+                when(deviceRepository.create(deviceToCreate)).thenReturn(createdDevice);
             }
 
             @Test
             void should_throw_item_already_exists_error() throws ItemAlreadyExists {
                 var deviceId = "mock-device-id";
                 var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
-                var deviceDto = deviceService.create(createDeviceDto);
+                var actual = deviceService.create(createDeviceDto);
 
-                assertThat(deviceDto.getId()).isEqualTo("mock-device-id");
+                assertThat(actual.getId()).isEqualTo("mock-device-id");
+                assertThat(actual.getCreatedAt()).isEqualTo(Instant.parse("2024-08-07T12:34:56.789Z"));
             }
 
             @Test

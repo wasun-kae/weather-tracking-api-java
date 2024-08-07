@@ -21,6 +21,7 @@ public class DeviceService {
 
         return DeviceDto.builder()
                 .id(device.getId())
+                .createdAt(device.getCreatedAt())
                 .build();
     }
 
@@ -39,6 +40,7 @@ public class DeviceService {
 
         return DeviceDto.builder()
                 .id(createdDevice.getId())
+                .createdAt(createdDevice.getCreatedAt())
                 .build();
     }
 }
