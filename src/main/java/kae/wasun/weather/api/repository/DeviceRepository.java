@@ -8,10 +8,14 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Expression;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
-import software.amazon.awssdk.enhanced.dynamodb.model.GetItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.Page;
 import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -29,16 +33,11 @@ public class DeviceRepository {
     public Optional<Device> findById(String id) {
         var partitionKey = MessageFormat.format("device#{0}", id);
         var sortKey = MessageFormat.format("device#{0}", id);
-        var compositeKeys = Key.builder()
-                .partitionValue(partitionKey)
-                .sortValue(sortKey)
-                .build();
+        var documents = queryDocuments(partitionKey, sortKey, false);
 
-        var document = dynamoDbTable.getItem(compositeKeys);
-
-        return document == null ? Optional.empty() : Optional.of(
+        return documents.isEmpty() ? Optional.empty() : Optional.of(
                 Device.builder()
-                        .id(document.getId())
+                        .id(documents.get(0).getId())
                         .build()
         );
     }
@@ -63,20 +62,30 @@ public class DeviceRepository {
 
         dynamoDbTable.putItem(putItemRequest);
 
+        var documents = queryDocuments(partitionKey, sortKey, true);
+
+        return Device.builder()
+                .id(documents.get(0).getId())
+                .build();
+    }
+
+    private List<WeatherTrackingDocument> queryDocuments(String partitionKey, String sortKey, boolean consistentRead) {
         var compositeKeys = Key.builder()
                 .partitionValue(partitionKey)
                 .sortValue(sortKey)
                 .build();
 
-        var getItemRequest = GetItemEnhancedRequest.builder()
-                .key(compositeKeys)
-                .consistentRead(true)
+        var queryConditional = QueryConditional.keyEqualTo(compositeKeys);
+        var queryRequest = QueryEnhancedRequest.builder()
+                .queryConditional(queryConditional)
+                .consistentRead(consistentRead)
                 .build();
 
-        var savedDocument = dynamoDbTable.getItem(getItemRequest);
+        var pageIterable = dynamoDbTable.query(queryRequest);
 
-        return Device.builder()
-                .id(savedDocument.getId())
-                .build();
+        return pageIterable.stream()
+                .map(Page::items)
+                .flatMap(Collection::stream)
+                .toList();
     }
 }
