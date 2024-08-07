@@ -1,5 +1,6 @@
 package kae.wasun.weather.api.controller;
 
+import jakarta.validation.Valid;
 import kae.wasun.weather.api.model.dto.CreateDeviceDto;
 import kae.wasun.weather.api.model.dto.DeviceDto;
 import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
@@ -23,7 +24,9 @@ public class DeviceController {
     }
 
     @PostMapping("/devices")
-    public ResponseEntity<DeviceDto> create(@RequestBody CreateDeviceDto createDeviceDto) throws ItemAlreadyExists {
+    public ResponseEntity<DeviceDto> create(@Valid @RequestBody CreateDeviceDto createDeviceDto)
+            throws ItemAlreadyExists {
+
         var deviceDto = deviceService.create(createDeviceDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(deviceDto);
     }

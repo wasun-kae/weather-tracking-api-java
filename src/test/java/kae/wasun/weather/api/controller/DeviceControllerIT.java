@@ -6,6 +6,8 @@ import kae.wasun.weather.api.config.TestContainersConfig;
 import kae.wasun.weather.api.helper.DynamoDBTestHelper;
 import kae.wasun.weather.api.model.document.WeatherTrackingDocument;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -132,6 +134,41 @@ public class DeviceControllerIT {
                     .andExpect(content().json("""
                                     {
                                         "message": "Item Already Exists"
+                                    }
+                                    """
+                            )
+                    );
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                """
+                        {
+                            "id": null
+                        }
+                        """,
+                """
+                        {
+                            "id": ""
+                        }
+                        """,
+                """
+                        {
+                            "id": " "
+                        }
+                        """,
+        })
+        void should_return_status_bad_request_with_error_message_if_request_body_is_invalid_format(String requestBody)
+                throws Exception {
+
+            mockMvc.perform(post("/devices")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(requestBody)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json("""
+                                    {
+                                        "message": "Invalid Format"
                                     }
                                     """
                             )

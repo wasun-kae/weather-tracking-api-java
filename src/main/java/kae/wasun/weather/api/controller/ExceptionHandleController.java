@@ -5,6 +5,7 @@ import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
 import kae.wasun.weather.api.model.exception.ItemNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -27,5 +28,14 @@ public class ExceptionHandleController {
                 .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDto);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDto> handleBadRequest() {
+        var errorDto = ErrorDto.builder()
+                .message("Invalid Format")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDto);
     }
 }
