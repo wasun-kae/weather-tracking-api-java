@@ -65,10 +65,10 @@ public class DeviceRepositoryIT {
     }
 
     @Nested
-    class save {
+    class create {
 
         @Test
-        void should_save_new_device_if_not_exists() throws ItemAlreadyExists {
+        void should_return_created_device_if_not_exists() throws ItemAlreadyExists {
             var deviceToSave = Device.builder()
                     .id(deviceId)
                     .build();
@@ -76,6 +76,23 @@ public class DeviceRepositoryIT {
             var actual = deviceRepository.create(deviceToSave);
 
             assertThat(actual.getId()).isEqualTo(deviceId);
+        }
+
+        @Test
+        void should_save_new_document_if_not_exists() throws ItemAlreadyExists {
+            var deviceToSave = Device.builder()
+                    .id(deviceId)
+                    .build();
+
+            deviceRepository.create(deviceToSave);
+
+            var partitionKey = MessageFormat.format("device#{0}", deviceId);
+            var sortKey = MessageFormat.format("device#{0}", deviceId);
+            var savedDocument = DynamoDBTestHelper.getItem(enhancedClient, partitionKey, sortKey);
+
+            assertThat(savedDocument.getPK()).isEqualTo("device#mock-device-id");
+            assertThat(savedDocument.getSK()).isEqualTo("device#mock-device-id");
+            assertThat(savedDocument.getId()).isEqualTo("mock-device-id");
         }
 
         @Test
