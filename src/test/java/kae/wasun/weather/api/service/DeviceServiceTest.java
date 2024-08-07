@@ -20,8 +20,6 @@ import static org.mockito.Mockito.*;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class DeviceServiceTest {
 
-    private final String deviceId = "mock-device-id";
-
     @Mock
     private DeviceRepository deviceRepository;
     private DeviceService deviceService;
@@ -36,19 +34,22 @@ public class DeviceServiceTest {
 
         @BeforeEach
         void setUp() {
+            var deviceId = "mock-device-id";
             var device = Device.builder().id(deviceId).build();
             when(deviceRepository.findById(deviceId)).thenReturn(Optional.of(device));
         }
 
         @Test
         void should_return_device_if_exists() throws ItemNotFoundException {
+            var deviceId = "mock-device-id";
             var actual = deviceService.findById(deviceId);
 
-            assertThat(actual.getId()).isEqualTo(deviceId);
+            assertThat(actual.getId()).isEqualTo("mock-device-id");
         }
 
         @Test
         void should_throw_item_not_found_error_if_not_exists() {
+            var deviceId = "mock-device-id";
             when(deviceRepository.findById(deviceId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> deviceService.findById(deviceId))
@@ -58,6 +59,7 @@ public class DeviceServiceTest {
 
         @Test
         void should_find_device_from_given_id() throws ItemNotFoundException {
+            var deviceId = "mock-device-id";
             deviceService.findById(deviceId);
 
             verify(deviceRepository, times(1)).findById(deviceId);
@@ -69,6 +71,7 @@ public class DeviceServiceTest {
 
         @Test
         void should_find_existing_device_from_given_id() throws ItemAlreadyExists {
+            var deviceId = "mock-device-id";
             var createdDevice = Device.builder().build();
             when(deviceRepository.create(any())).thenReturn(createdDevice);
 
@@ -83,12 +86,15 @@ public class DeviceServiceTest {
 
             @BeforeEach
             void setUp() {
+                var deviceId = "mock-device-id";
                 var device = Device.builder().id(deviceId).build();
+
                 when(deviceRepository.findById(deviceId)).thenReturn(Optional.of(device));
             }
 
             @Test
             void should_throw_item_already_exists_error() {
+                var deviceId = "mock-device-id";
                 var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
 
                 assertThatThrownBy(() ->
@@ -100,13 +106,14 @@ public class DeviceServiceTest {
 
             @Test
             void should_not_create_a_new_device() throws ItemAlreadyExists {
+                var deviceId = "mock-device-id";
                 var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
 
                 assertThatThrownBy(() ->
                         deviceService.create(createDeviceDto)
                 )
                         .isInstanceOf(Exception.class);
-                
+
                 verify(deviceRepository, never()).create(any());
             }
         }
@@ -116,6 +123,7 @@ public class DeviceServiceTest {
 
             @BeforeEach
             void setUp() throws ItemAlreadyExists {
+                var deviceId = "mock-device-id";
                 var createdDevice = Device.builder().id(deviceId).build();
 
                 when(deviceRepository.findById(deviceId)).thenReturn(Optional.empty());
@@ -124,14 +132,16 @@ public class DeviceServiceTest {
 
             @Test
             void should_throw_item_already_exists_error() throws ItemAlreadyExists {
+                var deviceId = "mock-device-id";
                 var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
                 var deviceDto = deviceService.create(createDeviceDto);
 
-                assertThat(deviceDto.getId()).isEqualTo(deviceId);
+                assertThat(deviceDto.getId()).isEqualTo("mock-device-id");
             }
 
             @Test
             void should_create_a_new_device() throws ItemAlreadyExists {
+                var deviceId = "mock-device-id";
                 var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
                 deviceService.create(createDeviceDto);
 

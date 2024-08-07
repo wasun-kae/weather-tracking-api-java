@@ -23,8 +23,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Import({AwsConfig.class, DynamoDBConfig.class, TestContainersConfig.class})
 public class DeviceRepositoryIT {
 
-    private final String deviceId = "mock-device-id";
-
     @Autowired
     private DynamoDbEnhancedClient enhancedClient;
 
@@ -41,6 +39,7 @@ public class DeviceRepositoryIT {
 
         @Test
         void should_return_device_if_exists() {
+            var deviceId = "mock-device-id";
             var partitionKey = MessageFormat.format("device#{0}", deviceId);
             var sortKey = MessageFormat.format("device#{0}", deviceId);
             var document = WeatherTrackingDocument.builder()
@@ -53,11 +52,12 @@ public class DeviceRepositoryIT {
             var actual = deviceRepository.findById(deviceId);
 
             assertThat(actual.isPresent()).isTrue();
-            assertThat(actual.get().getId()).isEqualTo(deviceId);
+            assertThat(actual.get().getId()).isEqualTo("mock-device-id");
         }
 
         @Test
         void should_return_empty_if_not_exist() {
+            var deviceId = "mock-device-id";
             var actual = deviceRepository.findById(deviceId);
 
             assertThat(actual.isEmpty()).isTrue();
@@ -69,17 +69,19 @@ public class DeviceRepositoryIT {
 
         @Test
         void should_return_created_device_if_not_exists() throws ItemAlreadyExists {
+            var deviceId = "mock-device-id";
             var deviceToSave = Device.builder()
                     .id(deviceId)
                     .build();
 
             var actual = deviceRepository.create(deviceToSave);
 
-            assertThat(actual.getId()).isEqualTo(deviceId);
+            assertThat(actual.getId()).isEqualTo("mock-device-id");
         }
 
         @Test
         void should_save_new_document_if_not_exists() throws ItemAlreadyExists {
+            var deviceId = "mock-device-id";
             var deviceToSave = Device.builder()
                     .id(deviceId)
                     .build();
@@ -97,6 +99,7 @@ public class DeviceRepositoryIT {
 
         @Test
         void should_throw_item_already_exists_error_if_device_already_exists() {
+            var deviceId = "mock-device-id";
             var device = Device.builder()
                     .id(deviceId)
                     .build();

@@ -17,8 +17,6 @@ import static org.mockito.Mockito.*;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class DeviceControllerTest {
 
-    private final String deviceId = "mock-device-id";
-
     @Mock
     private DeviceService deviceService;
     private DeviceController deviceController;
@@ -33,6 +31,7 @@ class DeviceControllerTest {
 
         @BeforeEach
         void setUp() throws ItemNotFoundException {
+            var deviceId = "mock-device-id";
             var deviceDto = DeviceDto.builder()
                     .id(deviceId)
                     .build();
@@ -42,6 +41,7 @@ class DeviceControllerTest {
 
         @Test
         void should_return_status_200_when_device_exists() throws ItemNotFoundException {
+            var deviceId = "mock-device-id";
             var actual = deviceController.findById(deviceId);
 
             assertThat(actual.getStatusCode().value()).isEqualTo(200);
@@ -49,14 +49,16 @@ class DeviceControllerTest {
 
         @Test
         void should_return_existing_device_data() throws ItemNotFoundException {
+            var deviceId = "mock-device-id";
             var actual = deviceController.findById(deviceId);
 
             assertThat(actual.getBody()).isNotNull();
-            assertThat(actual.getBody().getId()).isEqualTo(deviceId);
+            assertThat(actual.getBody().getId()).isEqualTo("mock-device-id");
         }
 
         @Test
         void should_find_existing_device_by_given_id() throws ItemNotFoundException {
+            var deviceId = "mock-device-id";
             deviceController.findById(deviceId);
 
             verify(deviceService, times(1)).findById(deviceId);
@@ -68,6 +70,7 @@ class DeviceControllerTest {
 
         @BeforeEach
         void setUp() throws ItemAlreadyExists {
+            var deviceId = "mock-device-id";
             var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
             var deviceDto = DeviceDto.builder()
                     .id(deviceId)
@@ -78,7 +81,9 @@ class DeviceControllerTest {
 
         @Test
         void should_return_status_201_when_a_new_device_created() throws ItemAlreadyExists {
+            var deviceId = "mock-device-id";
             var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
+
             var actual = deviceController.create(createDeviceDto);
 
             assertThat(actual.getStatusCode().value()).isEqualTo(201);
@@ -86,16 +91,20 @@ class DeviceControllerTest {
 
         @Test
         void should_return_created_device() throws ItemAlreadyExists {
+            var deviceId = "mock-device-id";
             var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
+
             var actual = deviceController.create(createDeviceDto);
 
             assertThat(actual.getBody()).isNotNull();
-            assertThat(actual.getBody().getId()).isEqualTo(deviceId);
+            assertThat(actual.getBody().getId()).isEqualTo("mock-device-id");
         }
 
         @Test
         void should_create_given_device() throws ItemAlreadyExists {
+            var deviceId = "mock-device-id";
             var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
+
             deviceController.create(createDeviceDto);
 
             verify(deviceService, times(1)).create(createDeviceDto);
