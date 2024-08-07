@@ -6,12 +6,12 @@ import kae.wasun.weather.api.config.TestContainersConfig;
 import kae.wasun.weather.api.helper.DynamoDBTestHelper;
 import kae.wasun.weather.api.model.document.WeatherTrackingDocument;
 import kae.wasun.weather.api.model.domain.Device;
+import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
-import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 
 import java.text.MessageFormat;
 
@@ -68,7 +68,7 @@ public class DeviceRepositoryIT {
     class save {
 
         @Test
-        void should_save_new_device_if_not_exists() {
+        void should_save_new_device_if_not_exists() throws ItemAlreadyExists {
             var deviceToSave = Device.builder()
                     .id(deviceId)
                     .build();
@@ -79,7 +79,7 @@ public class DeviceRepositoryIT {
         }
 
         @Test
-        void should_throw_an_error_if_device_already_exists() {
+        void should_throw_item_already_exists_error_if_device_already_exists() {
             var device = Device.builder()
                     .id(deviceId)
                     .build();
@@ -96,7 +96,9 @@ public class DeviceRepositoryIT {
 
             assertThatThrownBy(() ->
                     deviceRepository.create(device)
-            ).isInstanceOf(ConditionalCheckFailedException.class);
+            )
+                    .isInstanceOf(ItemAlreadyExists.class)
+                    .hasMessage("Item Already Exists");
         }
     }
 }

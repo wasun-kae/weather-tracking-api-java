@@ -2,6 +2,7 @@ package kae.wasun.weather.api.repository;
 
 import kae.wasun.weather.api.model.document.WeatherTrackingDocument;
 import kae.wasun.weather.api.model.domain.Device;
+import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
@@ -12,6 +13,7 @@ import software.amazon.awssdk.enhanced.dynamodb.model.Page;
 import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -42,7 +44,7 @@ public class DeviceRepository {
         );
     }
 
-    public Device create(Device device) {
+    public Device create(Device device) throws ItemAlreadyExists {
         var partitionKey = MessageFormat.format("device#{0}", device.getId());
         var sortKey = MessageFormat.format("device#{0}", device.getId());
         var documentToCreate = WeatherTrackingDocument.builder()
@@ -60,7 +62,11 @@ public class DeviceRepository {
                 .conditionExpression(expression)
                 .build();
 
-        dynamoDbTable.putItem(putItemRequest);
+        try {
+            dynamoDbTable.putItem(putItemRequest);
+        } catch (ConditionalCheckFailedException exception) {
+            throw new ItemAlreadyExists();
+        }
 
         var documents = queryDocuments(partitionKey, sortKey, true);
 
