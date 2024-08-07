@@ -50,12 +50,14 @@ public class DeviceRepositoryIT {
         @Test
         void should_return_device_if_exists() {
             var deviceId = "mock-device-id";
+            var currentDateTime = "2024-08-07T10:02:49.323576Z";
             var partitionKey = MessageFormat.format("device#{0}", deviceId);
             var sortKey = MessageFormat.format("device#{0}", deviceId);
             var document = WeatherTrackingDocument.builder()
                     .PK(partitionKey)
                     .SK(sortKey)
                     .id(deviceId)
+                    .createdAt(currentDateTime)
                     .build();
 
             DynamoDBTestHelper.putItem(enhancedClient, document);
@@ -63,6 +65,7 @@ public class DeviceRepositoryIT {
 
             assertThat(actual.isPresent()).isTrue();
             assertThat(actual.get().getId()).isEqualTo("mock-device-id");
+            assertThat(actual.get().getCreatedAt()).isEqualTo(Instant.parse("2024-08-07T10:02:49.323576Z"));
         }
 
         @Test
@@ -79,6 +82,7 @@ public class DeviceRepositoryIT {
 
         @Test
         void should_return_created_device_if_not_exists() throws ItemAlreadyExists {
+            var mockedCurrentDateTime = Instant.parse("2024-08-07T12:34:56.789Z").toString();
             var deviceId = "mock-device-id";
             var deviceToSave = Device.builder()
                     .id(deviceId)
@@ -87,6 +91,7 @@ public class DeviceRepositoryIT {
             var actual = deviceRepository.create(deviceToSave);
 
             assertThat(actual.getId()).isEqualTo("mock-device-id");
+            assertThat(actual.getCreatedAt()).isEqualTo(Instant.parse(mockedCurrentDateTime));
         }
 
         @Test

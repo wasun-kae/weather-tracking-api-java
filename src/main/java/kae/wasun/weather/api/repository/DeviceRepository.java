@@ -17,6 +17,7 @@ import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 
 import java.text.MessageFormat;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -43,9 +44,7 @@ public class DeviceRepository {
         var documents = queryDocuments(partitionKey, sortKey, false);
 
         return documents.isEmpty() ? Optional.empty() : Optional.of(
-                Device.builder()
-                        .id(documents.get(0).getId())
-                        .build()
+                this.convertToDevice(documents.get(0))
         );
     }
 
@@ -78,8 +77,13 @@ public class DeviceRepository {
 
         var documents = queryDocuments(partitionKey, sortKey, true);
 
+        return this.convertToDevice(documents.get(0));
+    }
+
+    private Device convertToDevice(WeatherTrackingDocument document) {
         return Device.builder()
-                .id(documents.get(0).getId())
+                .id(document.getId())
+                .createdAt(Instant.parse(document.getCreatedAt()))
                 .build();
     }
 
