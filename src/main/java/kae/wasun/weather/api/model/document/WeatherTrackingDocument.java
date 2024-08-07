@@ -24,6 +24,6 @@ public class WeatherTrackingDocument {
     @Getter(onMethod_ = {@DynamoDbSortKey})
     private String SK;
 
-
     private String id;
+    private String createdAt;
 }

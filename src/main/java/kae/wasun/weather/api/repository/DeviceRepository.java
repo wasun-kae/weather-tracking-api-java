@@ -3,6 +3,7 @@ package kae.wasun.weather.api.repository;
 import kae.wasun.weather.api.model.document.WeatherTrackingDocument;
 import kae.wasun.weather.api.model.domain.Device;
 import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
+import kae.wasun.weather.api.util.ClockUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
@@ -24,8 +25,12 @@ import java.util.Optional;
 public class DeviceRepository {
 
     private final DynamoDbTable<WeatherTrackingDocument> dynamoDbTable;
+    private final ClockUtil clockUtil;
 
-    public DeviceRepository(@Autowired DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+    public DeviceRepository(@Autowired DynamoDbEnhancedClient dynamoDbEnhancedClient,
+                            @Autowired ClockUtil clockUtil) {
+
+        this.clockUtil = clockUtil;
         this.dynamoDbTable = dynamoDbEnhancedClient.table(
                 WeatherTrackingDocument.TABLE_NAME,
                 WeatherTrackingDocument.TABLE_SCHEMA
@@ -47,10 +52,13 @@ public class DeviceRepository {
     public Device create(Device device) throws ItemAlreadyExists {
         var partitionKey = MessageFormat.format("device#{0}", device.getId());
         var sortKey = MessageFormat.format("device#{0}", device.getId());
+        var currentDateTime = clockUtil.getCurrentTime().toString();
+
         var documentToCreate = WeatherTrackingDocument.builder()
                 .PK(partitionKey)
                 .SK(sortKey)
                 .id(device.getId())
+                .createdAt(currentDateTime)
                 .build();
 
         var expression = Expression.builder()

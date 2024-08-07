@@ -7,16 +7,20 @@ import kae.wasun.weather.api.helper.DynamoDBTestHelper;
 import kae.wasun.weather.api.model.document.WeatherTrackingDocument;
 import kae.wasun.weather.api.model.domain.Device;
 import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
+import kae.wasun.weather.api.util.ClockUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 
 import java.text.MessageFormat;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -29,9 +33,15 @@ public class DeviceRepositoryIT {
     @Autowired
     private DeviceRepository deviceRepository;
 
+    @MockBean
+    private ClockUtil clockUtil;
+
     @BeforeEach
     void setUp() {
         DynamoDBTestHelper.deleteAllItems(enhancedClient);
+
+        var mockedCurrentDateTime = Instant.parse("2024-08-07T12:34:56.789000Z");
+        when(clockUtil.getCurrentTime()).thenReturn(mockedCurrentDateTime);
     }
 
     @Nested
@@ -92,9 +102,12 @@ public class DeviceRepositoryIT {
             var sortKey = MessageFormat.format("device#{0}", deviceId);
             var savedDocument = DynamoDBTestHelper.getItem(enhancedClient, partitionKey, sortKey);
 
+            var mockedCurrentDateTime = Instant.parse("2024-08-07T12:34:56.789Z").toString();
+
             assertThat(savedDocument.getPK()).isEqualTo("device#mock-device-id");
             assertThat(savedDocument.getSK()).isEqualTo("device#mock-device-id");
             assertThat(savedDocument.getId()).isEqualTo("mock-device-id");
+            assertThat(savedDocument.getCreatedAt()).isEqualTo(mockedCurrentDateTime);
         }
 
         @Test
