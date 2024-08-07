@@ -1,6 +1,9 @@
 package kae.wasun.weather.api.service;
 
+import kae.wasun.weather.api.model.domain.Device;
+import kae.wasun.weather.api.model.dto.CreateDeviceDto;
 import kae.wasun.weather.api.model.dto.DeviceDto;
+import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
 import kae.wasun.weather.api.model.exception.ItemNotFoundException;
 import kae.wasun.weather.api.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,24 @@ public class DeviceService {
 
         return DeviceDto.builder()
                 .id(device.getId())
+                .build();
+    }
+
+    public DeviceDto create(CreateDeviceDto createDeviceDto) throws ItemAlreadyExists {
+        var deviceOptional = deviceRepository.findById(createDeviceDto.getId());
+
+        if (deviceOptional.isPresent()) {
+            throw new ItemAlreadyExists();
+        }
+
+        var deviceToCreate = Device.builder()
+                .id(createDeviceDto.getId())
+                .build();
+
+        var createdDevice = deviceRepository.create(deviceToCreate);
+
+        return DeviceDto.builder()
+                .id(createdDevice.getId())
                 .build();
     }
 }
