@@ -8,9 +8,7 @@ import kae.wasun.weather.api.service.DeviceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +22,8 @@ public class DeviceController {
         return ResponseEntity.ok().body(deviceDto);
     }
 
-    public ResponseEntity<DeviceDto> create(CreateDeviceDto createDeviceDto) throws ItemAlreadyExists {
+    @PostMapping("/devices")
+    public ResponseEntity<DeviceDto> create(@RequestBody CreateDeviceDto createDeviceDto) throws ItemAlreadyExists {
         var deviceDto = deviceService.create(createDeviceDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(deviceDto);
     }

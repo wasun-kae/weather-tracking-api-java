@@ -1,11 +1,17 @@
 package kae.wasun.weather.api.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Data
 @Builder
-public class CreateDeviceDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateDeviceDto implements Serializable {
 
     private String id;
 }

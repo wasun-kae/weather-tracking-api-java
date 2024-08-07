@@ -10,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 
 import java.text.MessageFormat;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,6 +32,7 @@ public class DeviceControllerIT {
 
     @Autowired
     private DynamoDbEnhancedClient enhancedClient;
+
 
     @BeforeEach
     void setUp() {
@@ -73,6 +76,62 @@ public class DeviceControllerIT {
                     .andExpect(content().json("""
                                     {
                                         "message": "Item Not Found"
+                                    }
+                                    """
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    class create {
+
+        @Test
+        void should_return_status_created_with_data_if_device_not_exist() throws Exception {
+            mockMvc.perform(post("/devices")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""
+                                    {
+                                        "id": "mock-device-id"
+                                    }
+                                    """
+                            )
+                    )
+                    .andExpect(status().isCreated())
+                    .andExpect(content().json("""
+                                    {
+                                        "id": "mock-device-id"
+                                    }
+                                    """
+                            )
+                    );
+        }
+
+        @Test
+        void should_return_status_conflict_with_error_message_if_not_exist() throws Exception {
+            var deviceId = "mock-device-id";
+            var deviceKey = MessageFormat.format("device#{0}", deviceId);
+            var document = WeatherTrackingDocument.builder()
+                    .PK(deviceKey)
+                    .SK(deviceKey)
+                    .id(deviceId)
+                    .build();
+
+            DynamoDBTestHelper.putItem(enhancedClient, document);
+
+            mockMvc.perform(post("/devices")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""
+                                    {
+                                        "id": "mock-device-id"
+                                    }
+                                    """
+                            )
+                    )
+                    .andExpect(status().isConflict())
+                    .andExpect(content().json("""
+                                    {
+                                        "message": "Item Already Exists"
                                     }
                                     """
                             )
