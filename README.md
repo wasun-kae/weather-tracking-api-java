@@ -7,9 +7,12 @@ REST API for weather tracking device registration and capture tracking data i.e.
 ### Tech Stack
 
 - [Spring Boot](https://spring.io/projects/spring-boot)
-- [Maven](https://maven.apache.org/)
-- [AWS DynamoDB](https://aws.amazon.com/dynamodb/)
+- [DynamoDB](https://aws.amazon.com/dynamodb/)
 - [Localstack](https://www.localstack.cloud/)
+- [Maven](https://maven.apache.org/)
+- [Lombok](https://projectlombok.org/)
+- [JUnit](https://junit.org/junit5/)
+- [Mockito](https://site.mockito.org/)
 - [Testcontainers](https://testcontainers.com/)
 
 ### Pre-requisite
