@@ -1,5 +1,7 @@
 package kae.wasun.weather.api.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
@@ -14,13 +16,15 @@ import java.net.URISyntaxException;
 public class DynamoDBConfig {
 
     @Bean
-    public DynamoDbEnhancedClient dynamoDbEnhancedClient(AwsCredentialsProvider awsCredentialsProvider)
+    public DynamoDbEnhancedClient dynamoDbEnhancedClient(@Autowired AwsCredentialsProvider awsCredentialsProvider,
+                                                         @Value("${aws.region}") String region,
+                                                         @Value("${aws.dynamodb.endpoint}") String dynamoDBEndpoint)
             throws URISyntaxException {
 
         var dynamoDbClient = DynamoDbClient.builder()
                 .credentialsProvider(awsCredentialsProvider)
-                .region(Region.of("ap-southeast-1"))
-                .endpointOverride(new URI("http://localhost:4566"))
+                .region(Region.of(region))
+                .endpointOverride(new URI(dynamoDBEndpoint))
                 .build();
 
         return DynamoDbEnhancedClient.builder()

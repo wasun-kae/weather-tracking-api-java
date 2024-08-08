@@ -3,10 +3,23 @@ services:
     build: .
     ports:
       - "8080:8080"
+    depends_on:
+      - localstack
+
   localstack:
     image: "localstack/localstack:3.6"
     environment:
       - SERVICES=dynamodb
+      - AWS_ACCESS_KEY_ID=dummy-access-key
+      - AWS_SECRET_ACCESS_KEY=dummy-secret-key
+      - DYNAMODB_IN_MEMORY=1
+      - DEBUG=1
+    volumes:
+      - "${PWD}/init-localstack.sh:/etc/localstack/init/ready.d/init-localstack.sh"
+    healthcheck:
+      test: "awslocal dynamodb list-tables"
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
     ports:
-      - "4566:4566" # Localstack Gateway Port
-      - "4510:4510" # DynamoDB Port
+      - "4566:4566"

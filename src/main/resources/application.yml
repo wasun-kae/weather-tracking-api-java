@@ -5,3 +5,12 @@ spring:
 management:
   endpoints:
     web.exposure.include: health
+
+aws:
+  region: ${AWS_REGION:ap-southeast-1}
+  credentials:
+    access-key: ${AWS_ACCESS_KEY_ID:dummy-access-key}
+    secret-key: ${AWS_SECRET_ACCESS_KEY:dummy-secret-key}
+  dynamodb:
+    endpoint: ${AWS_DYNAMODB_ENDPOINT:http://localstack:4566}
+

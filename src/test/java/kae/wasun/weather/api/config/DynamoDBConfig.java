@@ -1,6 +1,7 @@
 package kae.wasun.weather.api.config;
 
 import kae.wasun.weather.api.model.document.WeatherTrackingDocument;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +16,8 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class DynamoDBConfig {
 
     @Bean
-    public DynamoDbEnhancedClient dynamoDbEnhancedClient(AwsCredentialsProvider awsCredentialsProvider,
-                                                         LocalStackContainer localStackContainer) {
+    public DynamoDbEnhancedClient dynamoDbEnhancedClient(@Autowired AwsCredentialsProvider awsCredentialsProvider,
+                                                         @Autowired LocalStackContainer localStackContainer) {
         var region = Region.of(localStackContainer.getRegion());
         var endpoint = localStackContainer.getEndpointOverride(LocalStackContainer.Service.DYNAMODB);
 
