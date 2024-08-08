@@ -1,4 +1,4 @@
-# Mini Project: Weather Tracking API (Currently In-Development)
+# Mini Project: Weather Tracking API (currently in-development)
 
 ## About
 
@@ -15,13 +15,13 @@ REST API for weather tracking device registration and capture tracking data i.e.
 - [Mockito](https://site.mockito.org/)
 - [Testcontainers](https://testcontainers.com/)
 
+## Getting started
+
 ### Pre-requisite
 
-- JDK version 17
-- [IntelliJ IDE (Recommended)](https://www.jetbrains.com/idea/)
+- [JDK version 17](https://openjdk.org/)
 - [Docker](https://www.docker.com/)
-
-## Getting started
+- [IntelliJ IDE (Recommended)](https://www.jetbrains.com/idea/)
 
 ### Run Unit Testing
 
