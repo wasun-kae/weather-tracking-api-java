@@ -8,7 +8,6 @@ import kae.wasun.weather.api.util.TimeFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Expression;
 import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
@@ -16,19 +15,20 @@ import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedExce
 import java.text.MessageFormat;
 
 @Repository
-public class DeviceTrackingRepository {
+public class DeviceTrackingRepository extends AbstractDocumentRepository {
 
-    private final DynamoDbTable<WeatherTrackingDocument> dynamoDbTable;
+
     private final ClockUtil clockUtil;
 
     public DeviceTrackingRepository(@Autowired DynamoDbEnhancedClient dynamoDbEnhancedClient,
                                     @Autowired ClockUtil clockUtil) {
-
-        this.clockUtil = clockUtil;
-        this.dynamoDbTable = dynamoDbEnhancedClient.table(
+        
+        super(dynamoDbEnhancedClient.table(
                 WeatherTrackingDocument.TABLE_NAME,
                 WeatherTrackingDocument.TABLE_SCHEMA
-        );
+        ));
+
+        this.clockUtil = clockUtil;
     }
 
     public DeviceTracking create(String deviceId, DeviceTracking deviceTracking) throws ItemAlreadyExistsException {

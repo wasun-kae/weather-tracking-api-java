@@ -8,35 +8,27 @@ import kae.wasun.weather.api.util.TimeFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Expression;
-import software.amazon.awssdk.enhanced.dynamodb.Key;
-import software.amazon.awssdk.enhanced.dynamodb.model.Page;
 import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 
 import java.text.MessageFormat;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class DeviceRepository {
+public class DeviceRepository extends AbstractDocumentRepository {
 
-    private final DynamoDbTable<WeatherTrackingDocument> dynamoDbTable;
     private final ClockUtil clockUtil;
 
     public DeviceRepository(@Autowired DynamoDbEnhancedClient dynamoDbEnhancedClient,
                             @Autowired ClockUtil clockUtil) {
-
-        this.clockUtil = clockUtil;
-        this.dynamoDbTable = dynamoDbEnhancedClient.table(
+        super(dynamoDbEnhancedClient.table(
                 WeatherTrackingDocument.TABLE_NAME,
                 WeatherTrackingDocument.TABLE_SCHEMA
-        );
+        ));
+
+        this.clockUtil = clockUtil;
     }
 
     public Optional<Device> findById(String id) {
@@ -77,8 +69,8 @@ public class DeviceRepository {
             throw new ItemAlreadyExistsException();
         }
 
-        var documents = queryDocuments(partitionKey, sortKey, true);
-
+        var documents = super.queryDocuments(partitionKey, sortKey, true);
+        
         return this.convertToDevice(documents.get(0));
     }
 
@@ -87,25 +79,5 @@ public class DeviceRepository {
                 .id(document.getId())
                 .createdAt(Instant.parse(document.getCreatedAt()))
                 .build();
-    }
-
-    private List<WeatherTrackingDocument> queryDocuments(String partitionKey, String sortKey, boolean consistentRead) {
-        var compositeKeys = Key.builder()
-                .partitionValue(partitionKey)
-                .sortValue(sortKey)
-                .build();
-
-        var queryConditional = QueryConditional.keyEqualTo(compositeKeys);
-        var queryRequest = QueryEnhancedRequest.builder()
-                .queryConditional(queryConditional)
-                .consistentRead(consistentRead)
-                .build();
-
-        var pageIterable = dynamoDbTable.query(queryRequest);
-
-        return pageIterable.stream()
-                .map(Page::items)
-                .flatMap(Collection::stream)
-                .toList();
     }
 }
