@@ -2,7 +2,7 @@ package kae.wasun.weather.api.controller;
 
 import kae.wasun.weather.api.model.dto.CreateDeviceDto;
 import kae.wasun.weather.api.model.dto.DeviceDto;
-import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
+import kae.wasun.weather.api.model.exception.ItemAlreadyExistsException;
 import kae.wasun.weather.api.model.exception.ItemNotFoundException;
 import kae.wasun.weather.api.service.DeviceService;
 import org.junit.jupiter.api.*;
@@ -74,7 +74,7 @@ class DeviceControllerTest {
     class create {
 
         @BeforeEach
-        void setUp() throws ItemAlreadyExists {
+        void setUp() throws ItemAlreadyExistsException {
             var deviceId = "mock-device-id";
             var createdAt = Instant.parse("2024-08-07T12:34:56.789000Z");
             var createDeviceDto = CreateDeviceDto
@@ -91,7 +91,7 @@ class DeviceControllerTest {
         }
 
         @Test
-        void should_return_status_201_when_a_new_device_created() throws ItemAlreadyExists {
+        void should_return_status_201_when_a_new_device_created() throws ItemAlreadyExistsException {
             var deviceId = "mock-device-id";
             var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
 
@@ -101,7 +101,7 @@ class DeviceControllerTest {
         }
 
         @Test
-        void should_return_created_device() throws ItemAlreadyExists {
+        void should_return_created_device() throws ItemAlreadyExistsException {
             var deviceId = "mock-device-id";
             var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
 
@@ -113,7 +113,7 @@ class DeviceControllerTest {
         }
 
         @Test
-        void should_create_given_device() throws ItemAlreadyExists {
+        void should_create_given_device() throws ItemAlreadyExistsException {
             var deviceId = "mock-device-id";
             var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
 

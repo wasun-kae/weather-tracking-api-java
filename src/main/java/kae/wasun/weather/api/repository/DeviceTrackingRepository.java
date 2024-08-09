@@ -2,7 +2,7 @@ package kae.wasun.weather.api.repository;
 
 import kae.wasun.weather.api.model.document.WeatherTrackingDocument;
 import kae.wasun.weather.api.model.domain.DeviceTracking;
-import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
+import kae.wasun.weather.api.model.exception.ItemAlreadyExistsException;
 import kae.wasun.weather.api.util.ClockUtil;
 import kae.wasun.weather.api.util.TimeFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class DeviceTrackingRepository {
         );
     }
 
-    public DeviceTracking create(String deviceId, DeviceTracking deviceTracking) throws ItemAlreadyExists {
+    public DeviceTracking create(String deviceId, DeviceTracking deviceTracking) throws ItemAlreadyExistsException {
         var formattedTimestamp = TimeFormatUtil.convertToString(deviceTracking.getTimestamp());
 
         var currentDateTime = clockUtil.getCurrentTime();
@@ -58,7 +58,7 @@ public class DeviceTrackingRepository {
         try {
             dynamoDbTable.putItem(putItemRequest);
         } catch (ConditionalCheckFailedException exception) {
-            throw new ItemAlreadyExists();
+            throw new ItemAlreadyExistsException();
         }
 
         return null;

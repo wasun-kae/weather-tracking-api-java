@@ -5,7 +5,7 @@ import kae.wasun.weather.api.config.DynamoDBConfig;
 import kae.wasun.weather.api.config.TestContainersConfig;
 import kae.wasun.weather.api.helper.DynamoDBTestHelper;
 import kae.wasun.weather.api.model.domain.DeviceTracking;
-import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
+import kae.wasun.weather.api.model.exception.ItemAlreadyExistsException;
 import kae.wasun.weather.api.util.ClockUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class DeviceTrackingRepositoryIT {
     class create {
 
         @Test
-        void should_save_new_document_if_not_exists() throws ItemAlreadyExists {
+        void should_save_new_document_if_not_exists() throws ItemAlreadyExistsException {
             var deviceId = "mock-device-id";
             var timestamp = Instant.parse("2024-08-06T00:00:00.123456Z");
 

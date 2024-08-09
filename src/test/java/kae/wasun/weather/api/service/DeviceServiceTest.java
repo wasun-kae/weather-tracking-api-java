@@ -2,7 +2,7 @@ package kae.wasun.weather.api.service;
 
 import kae.wasun.weather.api.model.domain.Device;
 import kae.wasun.weather.api.model.dto.CreateDeviceDto;
-import kae.wasun.weather.api.model.exception.ItemAlreadyExists;
+import kae.wasun.weather.api.model.exception.ItemAlreadyExistsException;
 import kae.wasun.weather.api.model.exception.ItemNotFoundException;
 import kae.wasun.weather.api.repository.DeviceRepository;
 import org.junit.jupiter.api.*;
@@ -77,7 +77,7 @@ public class DeviceServiceTest {
     class create {
 
         @Test
-        void should_find_existing_device_from_given_id() throws ItemAlreadyExists {
+        void should_find_existing_device_from_given_id() throws ItemAlreadyExistsException {
             var deviceId = "mock-device-id";
             var createdDevice = Device.builder().build();
             when(deviceRepository.create(any())).thenReturn(createdDevice);
@@ -107,12 +107,12 @@ public class DeviceServiceTest {
                 assertThatThrownBy(() ->
                         deviceService.create(createDeviceDto)
                 )
-                        .isInstanceOf(ItemAlreadyExists.class)
+                        .isInstanceOf(ItemAlreadyExistsException.class)
                         .hasMessage("Item Already Exists");
             }
 
             @Test
-            void should_not_create_a_new_device() throws ItemAlreadyExists {
+            void should_not_create_a_new_device() throws ItemAlreadyExistsException {
                 var deviceId = "mock-device-id";
                 var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
 
@@ -129,7 +129,7 @@ public class DeviceServiceTest {
         class when_device_not_exist {
 
             @BeforeEach
-            void setUp() throws ItemAlreadyExists {
+            void setUp() throws ItemAlreadyExistsException {
                 var deviceId = "mock-device-id";
                 var createdAt = Instant.parse("2024-08-07T12:34:56.789Z");
                 var deviceToCreate = Device.builder()
@@ -146,7 +146,7 @@ public class DeviceServiceTest {
             }
 
             @Test
-            void should_throw_item_already_exists_error() throws ItemAlreadyExists {
+            void should_throw_item_already_exists_error() throws ItemAlreadyExistsException {
                 var deviceId = "mock-device-id";
                 var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
                 var actual = deviceService.create(createDeviceDto);
@@ -156,7 +156,7 @@ public class DeviceServiceTest {
             }
 
             @Test
-            void should_create_a_new_device() throws ItemAlreadyExists {
+            void should_create_a_new_device() throws ItemAlreadyExistsException {
                 var deviceId = "mock-device-id";
                 var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
                 deviceService.create(createDeviceDto);
