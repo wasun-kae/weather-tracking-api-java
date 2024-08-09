@@ -61,15 +61,15 @@ public class DeviceTrackingRepositoryIT {
 
             var partitionKey = MessageFormat.format("device#{0}", deviceId);
             var sortKey = MessageFormat.format("timestamp#{0}", "2024-08-06T00:00:00.123Z");
-            var savedDocument = DynamoDBTestHelper.getItem(enhancedClient, partitionKey, sortKey);
+            var actual = DynamoDBTestHelper.getItem(enhancedClient, partitionKey, sortKey);
 
-            assertThat(savedDocument.getPK()).isEqualTo("device#mock-device-id");
-            assertThat(savedDocument.getSK()).isEqualTo("timestamp#2024-08-06T00:00:00.123Z");
+            assertThat(actual.getPK()).isEqualTo("device#mock-device-id");
+            assertThat(actual.getSK()).isEqualTo("timestamp#2024-08-06T00:00:00.123Z");
 
-            assertThat(savedDocument.getTimestamp()).isEqualTo("2024-08-06T00:00:00.123Z");
-            assertThat(savedDocument.getCreatedAt()).isEqualTo("2024-08-07T12:34:56.789Z");
-            assertThat(savedDocument.getTemperature()).isEqualTo(BigDecimal.valueOf(25.1));
-            assertThat(savedDocument.getHumidity()).isEqualTo(BigDecimal.valueOf(75.3));
+            assertThat(actual.getTimestamp()).isEqualTo("2024-08-06T00:00:00.123Z");
+            assertThat(actual.getCreatedAt()).isEqualTo("2024-08-07T12:34:56.789Z");
+            assertThat(actual.getTemperature()).isEqualTo(BigDecimal.valueOf(25.1));
+            assertThat(actual.getHumidity()).isEqualTo(BigDecimal.valueOf(75.3));
         }
     }
 }

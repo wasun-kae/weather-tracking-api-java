@@ -105,14 +105,12 @@ public class DeviceRepositoryIT {
 
             var partitionKey = MessageFormat.format("device#{0}", deviceId);
             var sortKey = MessageFormat.format("device#{0}", deviceId);
-            var savedDocument = DynamoDBTestHelper.getItem(enhancedClient, partitionKey, sortKey);
-
-            var mockedCurrentDateTime = Instant.parse("2024-08-07T12:34:56.789Z").toString();
-
-            assertThat(savedDocument.getPK()).isEqualTo("device#mock-device-id");
-            assertThat(savedDocument.getSK()).isEqualTo("device#mock-device-id");
-            assertThat(savedDocument.getId()).isEqualTo("mock-device-id");
-            assertThat(savedDocument.getCreatedAt()).isEqualTo(mockedCurrentDateTime);
+            var actual = DynamoDBTestHelper.getItem(enhancedClient, partitionKey, sortKey);
+            
+            assertThat(actual.getPK()).isEqualTo("device#mock-device-id");
+            assertThat(actual.getSK()).isEqualTo("device#mock-device-id");
+            assertThat(actual.getId()).isEqualTo("mock-device-id");
+            assertThat(actual.getCreatedAt()).isEqualTo("2024-08-07T12:34:56.789Z");
         }
 
         @Test

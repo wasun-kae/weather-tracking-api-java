@@ -27,6 +27,4 @@ class ClockUtilTest {
         assertThat(actual.isAfter(fiveSecondsBeforeNow)).isTrue();
         assertThat(actual.isBefore(fiveSecondsAfterNow)).isTrue();
     }
-
-
 }
