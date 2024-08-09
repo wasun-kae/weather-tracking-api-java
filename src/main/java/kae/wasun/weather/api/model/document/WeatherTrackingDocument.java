@@ -25,5 +25,6 @@ public class WeatherTrackingDocument {
     private String SK;
 
     private String id;
+    private String timestamp;
     private String createdAt;
 }
