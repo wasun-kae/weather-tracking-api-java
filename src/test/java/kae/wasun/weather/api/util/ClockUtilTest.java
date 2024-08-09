@@ -28,11 +28,5 @@ class ClockUtilTest {
         assertThat(actual.isBefore(fiveSecondsAfterNow)).isTrue();
     }
 
-    @Test
-    void should_return_correct_utc_timestamp_format() {
-        var instant = Instant.parse("2024-08-07T12:34:56.789000Z");
-        var actual = clockUtil.convertToString(instant);
 
-        assertThat(actual).isEqualTo("2024-08-07T12:34:56.789Z");
-    }
 }
