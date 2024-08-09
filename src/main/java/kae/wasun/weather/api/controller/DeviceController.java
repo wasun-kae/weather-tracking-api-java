@@ -18,12 +18,14 @@ public class DeviceController {
     private final DeviceService deviceService;
 
     @GetMapping("/devices/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<DeviceDto> findById(@PathVariable String id) throws ItemNotFoundException {
         var deviceDto = deviceService.findById(id);
         return ResponseEntity.ok().body(deviceDto);
     }
 
     @PostMapping("/devices")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<DeviceDto> create(@Valid @RequestBody CreateDeviceDto createDeviceDto)
             throws ItemAlreadyExists {
 

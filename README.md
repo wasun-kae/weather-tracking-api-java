@@ -7,6 +7,7 @@ REST API for weather tracking device registration and capture tracking data i.e.
 ### Tech Stack
 
 - [Spring Boot](https://spring.io/projects/spring-boot)
+- [SpringDoc OpenAPI](https://springdoc.org/)
 - [DynamoDB](https://aws.amazon.com/dynamodb/)
 - [Localstack](https://www.localstack.cloud/)
 - [Maven](https://maven.apache.org/)
@@ -54,3 +55,7 @@ This will build an artifact and Docker image to run with `docker-compose.yml` fi
 ```
 ./start.sh
 ```
+
+### Open API specification
+
+Go to `http://localhost:8080/swagger-ui/index.html` after run `start.sh` script
