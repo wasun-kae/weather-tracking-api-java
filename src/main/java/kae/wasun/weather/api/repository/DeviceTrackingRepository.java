@@ -43,6 +43,8 @@ public class DeviceTrackingRepository {
                 .PK(partitionKey)
                 .SK(sortKey)
                 .timestamp(formattedTimestamp)
+                .temperature(deviceTracking.getTemperature())
+                .humidity(deviceTracking.getHumidity())
                 .createdAt(formattedCurrentDateTime)
                 .build();
 

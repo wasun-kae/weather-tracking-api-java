@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.time.Instant;
 
@@ -52,6 +53,8 @@ public class DeviceTrackingRepositoryIT {
 
             var trackingToSave = DeviceTracking.builder()
                     .timestamp(timestamp)
+                    .temperature(BigDecimal.valueOf(25.1))
+                    .humidity(BigDecimal.valueOf(75.3))
                     .build();
 
             deviceTrackingRepository.create(deviceId, trackingToSave);
@@ -62,8 +65,11 @@ public class DeviceTrackingRepositoryIT {
 
             assertThat(savedDocument.getPK()).isEqualTo("device#mock-device-id");
             assertThat(savedDocument.getSK()).isEqualTo("timestamp#2024-08-06T00:00:00.123Z");
+
             assertThat(savedDocument.getTimestamp()).isEqualTo("2024-08-06T00:00:00.123Z");
             assertThat(savedDocument.getCreatedAt()).isEqualTo("2024-08-07T12:34:56.789Z");
+            assertThat(savedDocument.getTemperature()).isEqualTo(BigDecimal.valueOf(25.1));
+            assertThat(savedDocument.getHumidity()).isEqualTo(BigDecimal.valueOf(75.3));
         }
     }
 }

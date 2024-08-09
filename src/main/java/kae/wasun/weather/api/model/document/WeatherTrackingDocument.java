@@ -7,6 +7,8 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @DynamoDbBean
@@ -26,5 +28,8 @@ public class WeatherTrackingDocument {
 
     private String id;
     private String timestamp;
+    private BigDecimal temperature;
+    private BigDecimal humidity;
+
     private String createdAt;
 }
