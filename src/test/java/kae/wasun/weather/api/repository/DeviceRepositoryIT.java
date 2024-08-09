@@ -40,7 +40,7 @@ public class DeviceRepositoryIT {
     void setUp() {
         DynamoDBTestHelper.deleteAllItems(enhancedClient);
 
-        var mockedCurrentDateTime = Instant.parse("2024-08-07T12:34:56.789000Z");
+        var mockedCurrentDateTime = Instant.parse("2024-08-07T12:34:56.789123Z");
         when(clockUtil.getCurrentTime()).thenReturn(mockedCurrentDateTime);
     }
 
@@ -50,7 +50,7 @@ public class DeviceRepositoryIT {
         @Test
         void should_return_device_if_exists() {
             var deviceId = "mock-device-id";
-            var currentDateTime = "2024-08-07T10:02:49.323576Z";
+            var currentDateTime = "2024-08-07T10:02:49.323Z";
             var partitionKey = MessageFormat.format("device#{0}", deviceId);
             var sortKey = MessageFormat.format("device#{0}", deviceId);
             var document = WeatherTrackingDocument.builder()
@@ -65,7 +65,7 @@ public class DeviceRepositoryIT {
 
             assertThat(actual.isPresent()).isTrue();
             assertThat(actual.get().getId()).isEqualTo("mock-device-id");
-            assertThat(actual.get().getCreatedAt()).isEqualTo(Instant.parse("2024-08-07T10:02:49.323576Z"));
+            assertThat(actual.get().getCreatedAt()).isEqualTo(Instant.parse("2024-08-07T10:02:49.323Z"));
         }
 
         @Test
