@@ -23,11 +23,8 @@ public class DeviceRepository extends AbstractDocumentRepository {
 
     public DeviceRepository(@Autowired DynamoDbEnhancedClient dynamoDbEnhancedClient,
                             @Autowired ClockUtil clockUtil) {
-        super(dynamoDbEnhancedClient.table(
-                WeatherTrackingDocument.TABLE_NAME,
-                WeatherTrackingDocument.TABLE_SCHEMA
-        ));
-
+        
+        super(dynamoDbEnhancedClient);
         this.clockUtil = clockUtil;
     }
 
@@ -64,13 +61,13 @@ public class DeviceRepository extends AbstractDocumentRepository {
                 .build();
 
         try {
-            dynamoDbTable.putItem(putItemRequest);
+            super.dynamoDbTable.putItem(putItemRequest);
         } catch (ConditionalCheckFailedException exception) {
             throw new ItemAlreadyExistsException();
         }
 
         var documents = super.queryDocuments(partitionKey, sortKey, true);
-        
+
         return this.convertToDevice(documents.get(0));
     }
 

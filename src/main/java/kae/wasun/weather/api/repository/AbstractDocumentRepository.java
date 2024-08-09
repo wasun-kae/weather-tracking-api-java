@@ -1,6 +1,7 @@
 package kae.wasun.weather.api.repository;
 
 import kae.wasun.weather.api.model.document.WeatherTrackingDocument;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.model.Page;
@@ -14,8 +15,11 @@ public abstract class AbstractDocumentRepository {
 
     protected final DynamoDbTable<WeatherTrackingDocument> dynamoDbTable;
 
-    protected AbstractDocumentRepository(DynamoDbTable<WeatherTrackingDocument> dynamoDbTable) {
-        this.dynamoDbTable = dynamoDbTable;
+    protected AbstractDocumentRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        this.dynamoDbTable = dynamoDbEnhancedClient.table(
+                WeatherTrackingDocument.TABLE_NAME,
+                WeatherTrackingDocument.TABLE_SCHEMA
+        );
     }
 
     protected List<WeatherTrackingDocument> queryDocuments(String partitionKey,

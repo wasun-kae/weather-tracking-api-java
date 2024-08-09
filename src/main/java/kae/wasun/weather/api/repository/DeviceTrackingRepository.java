@@ -23,11 +23,7 @@ public class DeviceTrackingRepository extends AbstractDocumentRepository {
     public DeviceTrackingRepository(@Autowired DynamoDbEnhancedClient dynamoDbEnhancedClient,
                                     @Autowired ClockUtil clockUtil) {
         
-        super(dynamoDbEnhancedClient.table(
-                WeatherTrackingDocument.TABLE_NAME,
-                WeatherTrackingDocument.TABLE_SCHEMA
-        ));
-
+        super(dynamoDbEnhancedClient);
         this.clockUtil = clockUtil;
     }
 
@@ -58,7 +54,7 @@ public class DeviceTrackingRepository extends AbstractDocumentRepository {
                 .build();
 
         try {
-            dynamoDbTable.putItem(putItemRequest);
+            super.dynamoDbTable.putItem(putItemRequest);
         } catch (ConditionalCheckFailedException exception) {
             throw new ItemAlreadyExistsException();
         }
