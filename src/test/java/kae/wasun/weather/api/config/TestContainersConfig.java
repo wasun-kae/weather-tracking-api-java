@@ -11,7 +11,9 @@ public class TestContainersConfig {
     @Bean
     public LocalStackContainer localStackContainer() {
         var imageName = DockerImageName.parse("localstack/localstack:3.6");
-        return new LocalStackContainer(imageName)
-                .withServices(LocalStackContainer.Service.DYNAMODB);
+
+        try (var localStackContainer = new LocalStackContainer(imageName)) {
+            return localStackContainer.withServices(LocalStackContainer.Service.DYNAMODB);
+        }
     }
 }
