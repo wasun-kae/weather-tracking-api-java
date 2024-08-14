@@ -65,7 +65,7 @@ public class DeviceServiceTest {
         }
 
         @Test
-        void should_find_device_from_given_id() throws ItemNotFoundException {
+        void should_find_device_with_given_id_from_the_database() throws ItemNotFoundException {
             var deviceId = "mock-device-id";
             deviceService.findById(deviceId);
 
@@ -76,94 +76,58 @@ public class DeviceServiceTest {
     @Nested
     class create {
 
-        @Test
-        void should_find_existing_device_from_given_id() throws ItemAlreadyExistsException {
+        @BeforeEach
+        void setUp() throws ItemAlreadyExistsException {
             var deviceId = "mock-device-id";
-            var createdDevice = Device.builder().build();
-            when(deviceRepository.create(any())).thenReturn(createdDevice);
+            var createdAt = Instant.parse("2024-08-07T12:34:56.789Z");
+            var deviceToCreate = Device.builder()
+                    .id(deviceId)
+                    .build();
 
+            var createdDevice = Device.builder()
+                    .id(deviceId)
+                    .createdAt(createdAt)
+                    .build();
+
+            when(deviceRepository.create(deviceToCreate)).thenReturn(createdDevice);
+        }
+
+        @Test
+        void should_throw_item_already_exists_error_if_device_already_exists() throws ItemAlreadyExistsException {
+            var deviceId = "mock-device-id";
+            var deviceToCreate = Device.builder()
+                    .id(deviceId)
+                    .build();
+
+            when(deviceRepository.create(deviceToCreate)).thenThrow(new ItemAlreadyExistsException());
+
+            var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
+
+            assertThatThrownBy(() ->
+                    deviceService.create(createDeviceDto)
+            )
+                    .isInstanceOf(ItemAlreadyExistsException.class)
+                    .hasMessage("Item Already Exists");
+        }
+
+        @Test
+        void should_return_a_created_device() throws ItemAlreadyExistsException {
+            var deviceId = "mock-device-id";
+            var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
+            var actual = deviceService.create(createDeviceDto);
+
+            assertThat(actual.getId()).isEqualTo("mock-device-id");
+            assertThat(actual.getCreatedAt()).isEqualTo(Instant.parse("2024-08-07T12:34:56.789Z"));
+        }
+
+        @Test
+        void should_save_a_new_device_to_the_database() throws ItemAlreadyExistsException {
+            var deviceId = "mock-device-id";
             var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
             deviceService.create(createDeviceDto);
 
-            verify(deviceRepository, times(1)).findById(deviceId);
-        }
-
-        @Nested
-        class when_device_already_exists {
-
-            @BeforeEach
-            void setUp() {
-                var deviceId = "mock-device-id";
-                var device = Device.builder().id(deviceId).build();
-
-                when(deviceRepository.findById(deviceId)).thenReturn(Optional.of(device));
-            }
-
-            @Test
-            void should_throw_item_already_exists_error() {
-                var deviceId = "mock-device-id";
-                var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
-
-                assertThatThrownBy(() ->
-                        deviceService.create(createDeviceDto)
-                )
-                        .isInstanceOf(ItemAlreadyExistsException.class)
-                        .hasMessage("Item Already Exists");
-            }
-
-            @Test
-            void should_not_create_a_new_device() throws ItemAlreadyExistsException {
-                var deviceId = "mock-device-id";
-                var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
-
-                assertThatThrownBy(() ->
-                        deviceService.create(createDeviceDto)
-                )
-                        .isInstanceOf(Exception.class);
-
-                verify(deviceRepository, never()).create(any());
-            }
-        }
-
-        @Nested
-        class when_device_not_exist {
-
-            @BeforeEach
-            void setUp() throws ItemAlreadyExistsException {
-                var deviceId = "mock-device-id";
-                var createdAt = Instant.parse("2024-08-07T12:34:56.789Z");
-                var deviceToCreate = Device.builder()
-                        .id(deviceId)
-                        .build();
-
-                var createdDevice = Device.builder()
-                        .id(deviceId)
-                        .createdAt(createdAt)
-                        .build();
-
-                when(deviceRepository.findById(deviceId)).thenReturn(Optional.empty());
-                when(deviceRepository.create(deviceToCreate)).thenReturn(createdDevice);
-            }
-
-            @Test
-            void should_throw_item_already_exists_error() throws ItemAlreadyExistsException {
-                var deviceId = "mock-device-id";
-                var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
-                var actual = deviceService.create(createDeviceDto);
-
-                assertThat(actual.getId()).isEqualTo("mock-device-id");
-                assertThat(actual.getCreatedAt()).isEqualTo(Instant.parse("2024-08-07T12:34:56.789Z"));
-            }
-
-            @Test
-            void should_create_a_new_device() throws ItemAlreadyExistsException {
-                var deviceId = "mock-device-id";
-                var createDeviceDto = CreateDeviceDto.builder().id(deviceId).build();
-                deviceService.create(createDeviceDto);
-
-                var device = Device.builder().id(deviceId).build();
-                verify(deviceRepository, times(1)).create(device);
-            }
+            var device = Device.builder().id(deviceId).build();
+            verify(deviceRepository, times(1)).create(device);
         }
     }
 }

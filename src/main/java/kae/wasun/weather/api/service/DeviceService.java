@@ -26,12 +26,6 @@ public class DeviceService {
     }
 
     public DeviceDto create(CreateDeviceDto createDeviceDto) throws ItemAlreadyExistsException {
-        var deviceOptional = deviceRepository.findById(createDeviceDto.getId());
-
-        if (deviceOptional.isPresent()) {
-            throw new ItemAlreadyExistsException();
-        }
-
         var deviceToCreate = Device.builder()
                 .id(createDeviceDto.getId())
                 .build();
