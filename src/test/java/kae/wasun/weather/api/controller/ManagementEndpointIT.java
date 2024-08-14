@@ -34,7 +34,7 @@ public class ManagementEndpointIT {
                         {
                             "status": "UP"
                         }
-                        """)
+                        """, true)
                 );
     }
 
