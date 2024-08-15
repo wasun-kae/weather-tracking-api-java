@@ -1,4 +1,6 @@
-# Mini Project: Weather Tracking API (currently in-development)
+# Mini Project: Weather Tracking API
+
+> This project is currently in development
 
 ## About
 
@@ -15,6 +17,10 @@ REST API for weather tracking device registration and capture tracking data i.e.
 - [JUnit](https://junit.org/junit5/)
 - [Mockito](https://site.mockito.org/)
 - [Testcontainers](https://testcontainers.com/)
+
+### Application Design
+
+![Architecture Diagram](architecture_diagram.jpg)
 
 ## Getting started
 
@@ -58,4 +64,4 @@ This will build an artifact and Docker image to run with `docker-compose.yml` fi
 
 ### Open API specification
 
-Go to `http://localhost:8080/swagger-ui/index.html` after run `start.sh` script
+Go to `http://localhost:8080/swagger-ui/index.html` after running `start.sh` script
