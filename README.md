@@ -32,33 +32,29 @@ REST API for weather tracking device registration and capture tracking data i.e.
 
 ### Run Unit Testing
 
-This will execute unit test files (`*Test.java`)
-
-```
+```shell
+# To run unit test files (*Test.java)
 ./mvnw test
 ```
 
 ### Run Integration Testing
 
-This will execute integration test files (`*IT.java`) with DynamoDB on Localstack Testcontainer
-
-```
+```shell
+# To run unit and integration test files (*IT.java) with DynamoDB on Localstack Testcontainer
 ./mvnw integration-test
 ```
 
 ### Build Application Artifact
 
-This will create `app.jar` in `target` directory
-
-```
+```shell
+# To create app.jar in `target` directory
 ./mvnw clean install
 ```
 
 ### Run Application with DynamoDB on Localstack
 
-This will build an artifact and Docker image to run with `docker-compose.yml` file
-
-```
+```shell
+# To build Docker image to run with docker-compose.yml file
 ./start.sh
 ```
 
