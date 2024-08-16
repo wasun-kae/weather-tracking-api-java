@@ -15,31 +15,32 @@ public class ExceptionHandleController {
 
     @ExceptionHandler(ItemNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorDto> handleItemNotFound(ItemNotFoundException exception) {
-        var errorDto = ErrorDto.builder()
-                .message(exception.getMessage())
-                .build();
-
+    public ResponseEntity<ErrorDto> handleItemNotFound(Exception e) {
+        var errorDto = this.convertToErrorDto(e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDto);
     }
 
     @ExceptionHandler(ItemAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<ErrorDto> handleItemAlreadyExists(ItemAlreadyExistsException exception) {
-        var errorDto = ErrorDto.builder()
-                .message(exception.getMessage())
-                .build();
-
+    public ResponseEntity<ErrorDto> handleItemAlreadyExists(Exception e) {
+        var errorDto = this.convertToErrorDto(e);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDto);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorDto> handleBadRequest() {
-        var errorDto = ErrorDto.builder()
-                .message("Invalid Format")
-                .build();
-
+        var errorDto = this.convertToErrorDto("Invalid Format");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDto);
+    }
+
+    private ErrorDto convertToErrorDto(Exception e) {
+        return this.convertToErrorDto(e.getMessage());
+    }
+
+    private ErrorDto convertToErrorDto(String message) {
+        return ErrorDto.builder()
+                .message(message)
+                .build();
     }
 }
