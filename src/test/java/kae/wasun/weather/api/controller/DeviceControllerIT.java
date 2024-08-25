@@ -5,6 +5,7 @@ import kae.wasun.weather.api.config.DynamoDBConfig;
 import kae.wasun.weather.api.config.TestContainersConfig;
 import kae.wasun.weather.api.helper.DynamoDBTestHelper;
 import kae.wasun.weather.api.model.document.WeatherTrackingDocument;
+import kae.wasun.weather.api.service.DeviceService;
 import kae.wasun.weather.api.util.ClockUtil;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +23,8 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import java.text.MessageFormat;
 import java.time.Instant;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,6 +45,9 @@ public class DeviceControllerIT {
 
     @MockBean
     private ClockUtil clockUtil;
+
+    @SpyBean
+    private DeviceService deviceService;
 
     @BeforeEach
     void setUp() {
@@ -88,6 +95,23 @@ public class DeviceControllerIT {
                     .andExpect(content().json("""
                             {
                                 "message": "Item Not Found"
+                            }
+                            """, true)
+                    );
+        }
+
+        @Test
+        void should_return_status_internal_server_error_with_message_if_there_is_unexpected_error() throws Exception {
+            doThrow(new RuntimeException()).when(deviceService).findById(any());
+
+            var deviceId = "mock-device-id";
+            var path = MessageFormat.format("/devices/{0}", deviceId);
+
+            mockMvc.perform(get(path))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(content().json("""
+                            {
+                                "message": "Internal Server Error"
                             }
                             """, true)
                     );

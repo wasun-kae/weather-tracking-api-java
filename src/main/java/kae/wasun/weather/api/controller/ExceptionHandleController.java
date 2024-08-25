@@ -34,6 +34,13 @@ public class ExceptionHandleController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDto);
     }
 
+    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorDto> handleInternalServerError() {
+        var errorDto = this.convertToErrorDto("Internal Server Error");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDto);
+    }
+
     private ErrorDto convertToErrorDto(Exception e) {
         return this.convertToErrorDto(e.getMessage());
     }
